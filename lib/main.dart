@@ -15,37 +15,72 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
-
+class MyHomePage extends StatelessWidget {
   final String title;
 
-  @override
-  State<MyHomePage> createState() => _MyHomePageState();
-}
+  final snackBar = SnackBar(
+    action: SnackBarAction(
+      label: 'Panic',
+      onPressed: () => print('got press'),
+      textColor: Colors.white,
+    ),
+    backgroundColor: Colors.red.shade900,
+    //behavior: SnackBarBehavior.floating,
+    content: Row(
+      children: [
+        Icon(Icons.error_outline, color: Colors.white, size: 32),
+        SizedBox(width: 16),
+        // Using Expanded allows the text to wrap.
+        Expanded(
+          child: Text(
+            'This is a long sentence that will require wrapping.',
+            style: TextStyle(fontSize: 18),
+          ),
+        ),
+      ],
+    ),
+    //dismissDirection: DismissDirection.up,
+    duration: Duration(seconds: 10),
+    //elevation: 0,
+    //margin: EdgeInsets.all(10),
+    //padding: EdgeInsets.all(10),
+    //shape: StadiumBorder(),
+    //width: 200,
+  );
 
-class _MyHomePageState extends State<MyHomePage> {
+  MyHomePage({Key? key, required this.title}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
+      appBar: AppBar(title: Text(title)),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             ElevatedButton(
-              child: Text('Show SnackBar'),
+              child: Text('Show SnackBar #1'),
               onPressed: () {
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(content: Text('I am a SnackBar!')),
-                );
+                ScaffoldMessenger.of(context)
+                  // If another SnackBar is currently displayed, remove it.
+                  // There are two methods that do this.
+                  //..hideCurrentSnackBar() // runs exit animation
+                  ..removeCurrentSnackBar() // does not run exit animation
+                  // Now show the new SnackBar.
+                  ..showSnackBar(snackBar);
+              },
+            ),
+            ElevatedButton(
+              child: Text('Show SnackBar #2'),
+              onPressed: () {
+                ScaffoldMessenger.of(context)
+                  ..hideCurrentSnackBar()
+                  ..showSnackBar(snackBar);
               },
             )
           ],
